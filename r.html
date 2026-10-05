@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Карточки с QR — для печати</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Cormorant Garamond', serif;
+    background: #e8e8ec;
+    padding: 20px;
+}
+
+.toolbar {
+    max-width: 900px;
+    margin: 0 auto 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    font-family: 'Manrope', sans-serif;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.toolbar h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    margin-bottom: 8px;
+    color: #2a1a4f;
+}
+
+.toolbar p {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 6px;
+}
+
+.sheet {
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    margin: 0 auto 20px;
+    padding: 10mm;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 5mm;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.sheet.back {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+.card {
+    width: 100%;
+    aspect-ratio: 9 / 5;
+    border: 1px dashed #c0c0c8;
+    border-radius: 6px;
+    padding: 6mm 6mm 5mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    background: #fdfcfa;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent);
+}
+
+.card .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    font-family: 'Manrope', sans-serif;
+    font-size: 7pt;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 3mm;
+}
+
+.card .symbol { font-size: 12pt; line-height: 1; }
+.card .text {
+    font-size: 9.5pt;
+    line-height: 1.42;
+    color: #2a2138;
+    flex-grow: 1;
+}
+.card .wish {
+    font-family: 'Manrope', sans-serif;
+    font-size: 7.8pt;
+    font-weight: 500;
+    color: var(--accent);
+    margin-top: 3mm;
+    padding-top: 2.5mm;
+    border-top: 0.5px solid rgba(0,0,0,0.08);
+    letter-spacing: 0.01em;
+    line-height: 1.35;
+}
+
+.card.love { --accent: #b8547a; }
+.card.money { --accent: #8b6b1f; }
+.card.luck { --accent: #4a7d4a; }
+.card.protect { --accent: #5c4d8c; }
+
+/* ===== Оборотная сторона ===== */
+.card-back {
+    width: 100%;
+    aspect-ratio: 9 / 5;
+    border: 1px dashed #c0c0c8;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #2a1a4f 0%, #1a0f35 100%);
+    color: #fef3c7;
+    padding: 6mm;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 5mm;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-back::before {
+    content: '';
+    position: absolute;
+    inset: 2mm;
+    border: 1px solid rgba(254, 243, 199, 0.25);
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+.card-back .qr-wrap {
+    width: 30mm;
+    height: 30mm;
+    background: white;
+    border-radius: 4px;
+    padding: 2mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+}
+
+.card-back .qr-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.card-back .back-text {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5mm;
+}
+
+.card-back .back-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14pt;
+    font-weight: 600;
+    color: #fef3c7;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+}
+
+.card-back .back-sub {
+    font-family: 'Manrope', sans-serif;
+    font-size: 7.5pt;
+    color: rgba(254, 243, 199, 0.75);
+    line-height: 1.4;
+}
+
+.card-back .back-code {
+    font-family: 'Manrope', sans-serif;
+    font-size: 7pt;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(254, 243, 199, 0.55);
+    margin-top: 1mm;
+}
+
+.card-back .back-code strong {
+    color: #fef3c7;
+    font-size: 9pt;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+}
+
+@media print {
+    body { background: white; padding: 0; }
+    .toolbar { display: none; }
+    .sheet {
+        box-shadow: none;
+        margin: 0;
+        page-break-after: always;
+    }
+    @page { size: A4; margin: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+    <h1>Карточки с QR — печать</h1>
+    <p><b>Как печатать:</b> Ctrl+P → Двусторонняя печать «по короткому краю» → Сохранить как PDF → распечатать.</p>
+    <p><b>Формат:</b> A4, 8 карточек на лист, карточка 9×5 см.</p>
+    <p><b>QR-код:</b> замените <code>QR_HERE</code> на свою ссылку в коде (см. ниже) или вставьте <code>&lt;img src="ваш-qr.png"&gt;</code>.</p>
+</div>
+
+<!-- ЛИЦЕВАЯ СТОРОНА -->
+<div class="sheet">
+
+    <div class="card love">
+        <div>
+            <div class="header"><span>Любовь и гармония</span><span class="symbol">✦</span></div>
+            <div class="text">Ты входишь в пространство, где любовь начинается с бережного отношения к себе. Не торопи чувства и не пытайся удержать то, что должно идти своим путём. Оставь место для искренности — она всегда узнаёт своё.</div>
+        </div>
+        <div class="wish">Пусть сердце твоё выбирает то, где ему спокойно.</div>
+    </div>
+
+    <div class="card love">
+        <div>
+            <div class="header"><span>Любовь и гармония</span><span class="symbol">✦</span></div>
+            <div class="text">Сейчас особенно важно слышать не только слова, но и то, что чувствуешь рядом с человеком. Там, где есть тепло, уважение и свобода быть собой, отношения раскрываются естественно. Доверяй этому внутреннему ощущению.</div>
+        </div>
+        <div class="wish">Пусть рядом остаётся настоящее тепло.</div>
+    </div>
+
+    <div class="card love">
+        <div>
+            <div class="header"><span>Любовь и гармония</span><span class="symbol">✦</span></div>
+            <div class="text">В твоём сердце есть место для новой нежности. Не закрывай его из-за прошлого и не требуй от будущего точных ответов. Иногда любовь приходит не громко, а как тихое ощущение: «мне здесь хорошо».</div>
+        </div>
+        <div class="wish">Пусть любовь приходит легко и остаётся светлой.</div>
+    </div>
+
+    <div class="card love">
+        <div>
+            <div class="header"><span>Любовь и гармония</span><span class="symbol">✦</span></div>
+            <div class="text">Гармония рождается не из идеальности, а из принятия. Позволь себе быть разным — сильным, мягким, задумчивым, счастливым. Когда ты перестаёшь прятать настоящего себя, становится проще встретиться с теми, кто видит тебя по-настоящему.</div>
+        </div>
+        <div class="wish">Пусть тебя любят именно таким, какой ты есть.</div>
+    </div>
+
+    <div class="card love">
+        <div>
+            <div class="header"><span>Любовь и гармония</span><span class="symbol">✦</span></div>
+            <div class="text">Не спеши навстречу любви — сначала почувствуй собственный ритм. Внутренняя наполненность притягивает отношения, в которых не приходится становиться меньше ради другого человека. Доверяй своему сердцу.</div>
+        </div>
+        <div class="wish">Пусть твоя любовь будет взаимной и бережной.</div>
+    </div>
+
+    <div class="card money">
+        <div>
+            <div class="header"><span>Финансы и изобилие</span><span class="symbol">✦</span></div>
+            <div class="text">Перед тобой открывается пространство новых идей и возможностей. Не обесценивай то, что приходит в голову словно случайная мысль — иногда именно там прячется следующий шаг.</div>
+        </div>
+        <div class="wish">Пусть твои идеи находят путь к изобилию.</div>
+    </div>
+
+    <div class="card money">
+        <div>
+            <div class="header"><span>Финансы и изобилие</span><span class="symbol">✦</span></div>
+            <div class="text">Изобилие начинается с ощущения, что тебе можно хотеть большего. Разреши себе принимать хорошее без чувства вины и замечать ценность того, что уже создано твоими руками.</div>
+        </div>
+        <div class="wish">Пусть поток достатка становится свободнее.</div>
+    </div>
+
+    <div class="card money">
+        <div>
+            <div class="header"><span>Финансы и изобилие</span><span class="symbol">✦</span></div>
+            <div class="text">Сейчас не время сомневаться в каждом своём решении. Выбери направление, которое откликается внутри, и сделай хотя бы один шаг ему навстречу. Маленькое движение тоже меняет пространство вокруг.</div>
+        </div>
+        <div class="wish">Пусть смелость открывает двери к новым возможностям.</div>
+    </div>
+
+</div>
+
+<!-- ОБОРОТНАЯ СТОРОНА (с QR) -->
+<div class="sheet back">
+
+    <div class="card-back">
+        <div class="qr-wrap"><img src="QR_HERE" alt="QR"></div>
+        <div class="back-text">
+            <div class="back-title">Твоё персональное послание</div>
+            <div class="back-sub">Отсканируй QR и введи свой код, чтобы открыть расклад, сделанный для тебя.</div>
+            <div class="back-code">Код: <strong>L-001</strong></div>
+        </div>
+    </div>
+
+    <div class="card-back">
+        <div class="qr-wrap"><img src="QR_HERE" alt="QR"></div>
+        <div class="back-text">
+            <div class="back-title">Твоё персональное послание</div>
+            <div class="back-sub">Отсканируй QR и введи свой код, чтобы открыть расклад, сделанный для тебя.</div>
+            <div class="back-code">Код: <strong>L-002</strong></div>
+        </div>
+    </div>
+
+    <!-- ... остальные 6 карточек оборота копируйте с новыми кодами: L-003, L-004, L-005, M-001, M-002, M-003 ... -->
+
+</div>
+
+</body>
+</html>
